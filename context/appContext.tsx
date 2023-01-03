@@ -29,7 +29,7 @@ const appContext = createContext<IAppContext>(sampleAppContext);
 export const useAppContext = () => useContext(appContext);
 
 const AppContext = ({ children }: Props) => {
-  const [account, setAccount] = useState<string>("");\
+  const [account, setAccount] = useState<string>("");
   const [nfts, setNfts] = useState({ loading: true, data: [], length: 0 });
   const [error, setError] = useState({ error: false, message: "", code: 0, btn: "" });
 
