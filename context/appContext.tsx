@@ -1,14 +1,15 @@
+import { IError, INFTs } from "../utils/interfaces";
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { IError } from "../utils/interfaces";
-import useContract from "../hooks/useContract";
+import Moralis from "moralis";
+import NFTPunk from "../contract/NFTPunk.json";
 
 interface Props {
   children: JSX.Element;
 }
 
 interface IAppContext {
-  nfts: object;
+  nfts: INFTs;
   connectWallet: () => Promise<any>;
   switchNetwork: () => Promise<any>;
   account: string;
@@ -17,7 +18,7 @@ interface IAppContext {
 }
 
 const sampleAppContext: IAppContext = {
-  nfts: {},
+  nfts: { loading: true, data: [], length: 0 },
   connectWallet: () => new Promise(() => {}),
   switchNetwork: () => new Promise(() => {}),
   account: "",
@@ -29,15 +30,15 @@ const appContext = createContext<IAppContext>(sampleAppContext);
 export const useAppContext = () => useContext(appContext);
 
 const AppContext = ({ children }: Props) => {
-  const [account, setAccount] = useState<string>("");
-  const [nfts, setNfts] = useState({ loading: true, data: [], length: 0 });
-  const [error, setError] = useState({ error: false, message: "", code: 0, btn: "" });
+  const [account, setAccount] = useState<string>(sampleAppContext.account);
+  const [nfts, setNfts] = useState(sampleAppContext.nfts);
+  const [error, setError] = useState(sampleAppContext.error);
 
   useEffect(() => {
     const { ethereum } = window;
     if (ethereum) {
       // listen for accounts change and chain change
-      ethereum.on("accountsChanged", () => window.location.reload());
+      ethereum.on("accountsChanged", () => console.log()); //window.location.reload());
       ethereum.on("chainChanged", (chainId: string) => {
         if (chainId === "0x13881") removeError();
         else
@@ -158,6 +159,25 @@ const AppContext = ({ children }: Props) => {
   };
 
   const removeError = () => setError({ error: false, message: "", code: 0, btn: "" });
+
+  // get nft punks
+  useEffect(() => {
+    (async () => {
+      try {
+        const { raw } = await Moralis.EvmApi.nft.getContractNFTs({
+          address: NFTPunk.address,
+          chain: "0x13881", // polygon mumbai testnet
+        });
+
+        console.log(raw.result);
+
+        setNfts({ loading: false, data: raw.result || [], length: raw.result?.length || 0 });
+      } catch (err) {
+        console.log(err);
+        setNfts(sampleAppContext.nfts);
+      }
+    })();
+  }, []);
 
   return (
     <appContext.Provider

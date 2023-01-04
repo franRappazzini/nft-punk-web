@@ -8,10 +8,10 @@ import useRandomImage from "../hooks/useRandomImage";
 import { useState } from "react";
 
 export default function Home() {
-  const { account } = useAppContext();
+  const { account, nfts } = useAppContext();
   const [isMinting, setIsMinting] = useState(false);
   const contract = useContract();
-  const image = useRandomImage(1, account);
+  const image = useRandomImage(nfts.length, account);
 
   const mint = async () => {
     setIsMinting(true);
@@ -66,7 +66,7 @@ export default function Home() {
               <Badge>
                 Next ID:
                 <Badge ml={1} colorScheme="green">
-                  1
+                  {nfts.length}
                 </Badge>
               </Badge>
               <Badge ml={2}>
@@ -76,14 +76,14 @@ export default function Home() {
                 </Badge>
               </Badge>
             </Flex>
-            <Button
+            {/* <Button
               // onClick={getPlatziPunksData}
               mt={4}
               size="xs"
               colorScheme="green"
             >
               Actualizar
-            </Button>
+            </Button> */}
           </>
         ) : (
           <Badge mt={2}>Wallet desconectada</Badge>
