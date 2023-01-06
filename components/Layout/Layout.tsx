@@ -1,11 +1,13 @@
-import { Button, Stack, Text } from "@chakra-ui/react";
+import { Button, Stack, Text, useToast } from "@chakra-ui/react";
 
 import Error from "../Error/Error";
 import Head from "next/head";
 import Link from "next/link";
+import PopoverCopy from "../PopoverCopy/PopoverCopy";
 import { parseAddress } from "../../utils/functions";
 import style from "./Layout.module.scss";
 import { useAppContext } from "../../context/appContext";
+import { useEffect } from "react";
 
 interface Props {
   children: JSX.Element;
@@ -14,14 +16,18 @@ interface Props {
 
 const Layout = ({ children, title = "NFT Punk" }: Props) => {
   const { account, connectWallet, switchNetwork, error, removeError } = useAppContext();
+  const toast = useToast();
 
+  // modal error responses
   const handleClick = async () => {
     try {
       if (error.code === 3) {
         const res = await connectWallet();
         if (res?.code) return;
+        else removeError();
       } else if (error.code === 2) {
         window.open("https://metamask.io/", "_blank");
+        removeError();
       } else if (error.code === 1) {
         const res = await switchNetwork();
         if (res?.code) return;
@@ -31,6 +37,31 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
       console.log(err);
     }
   };
+
+  // check if the connection is from a mobile
+  useEffect(() => {
+    const { userAgent } = navigator;
+    if (
+      userAgent &&
+      (userAgent.match(/Android/i) ||
+        userAgent.match(/webOS/i) ||
+        userAgent.match(/iPhone/i) ||
+        userAgent.match(/iPad/i) ||
+        userAgent.match(/iPod/i) ||
+        userAgent.match(/BlackBerry/i) ||
+        userAgent.match(/Windows Phone/i))
+    ) {
+      toast({
+        title: "Atención. Estás usando un dispositivo móvil",
+        description:
+          "No podrás utilizar ciertas funcionalidades como mintear o ver los detalles completos de un NFT Punk. conéctese desde una computadora para poder usar todas las funcionalidades",
+        status: "warning",
+        duration: 15000,
+        isClosable: true,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -59,13 +90,15 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
         </nav>
 
         {account ? (
-          <Text
-            onClick={() => navigator.clipboard.writeText(account)}
-            fontWeight={600}
-            cursor="pointer"
-          >
-            {parseAddress(account)}
-          </Text>
+          <PopoverCopy text={account}>
+            <Text
+              onClick={() => navigator.clipboard.writeText(account)}
+              fontWeight={600}
+              cursor="pointer"
+            >
+              {parseAddress(account)}
+            </Text>
+          </PopoverCopy>
         ) : (
           <Button size="sm" colorScheme="green" onClick={connectWallet}>
             MetaMask
@@ -75,7 +108,7 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
 
       <main>
         {children}
-        {error.error && <Error error={error} onClick={handleClick} />}
+        {error.error && <Error error={error} onClick={handleClick} removeError={removeError} />}
       </main>
 
       <footer></footer>

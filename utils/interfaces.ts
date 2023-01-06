@@ -1,3 +1,4 @@
+// custom errors
 export interface IError {
   error: boolean;
   message: string;
@@ -5,6 +6,7 @@ export interface IError {
   btn: string;
 }
 
+// nft punk contract
 export interface IContractNFT {
   tokenURI?: string;
   dna?: string;
@@ -24,6 +26,7 @@ export interface IContractNFT {
   topType?: string;
 }
 
+// nft to detail nft page
 export interface ICompleteNFT {
   tokenURI?: string;
   dna?: string;
@@ -34,6 +37,7 @@ export interface ICompleteNFT {
   image?: string;
 }
 
+// nfts from moralis
 export interface INFT {
   token_address?: string;
   token_id?: string;
@@ -52,6 +56,7 @@ export interface INFT {
   owner_of?: string | undefined;
 }
 
+// nft state
 export interface INFTs {
   loading: boolean;
   data: INFT[] | [];

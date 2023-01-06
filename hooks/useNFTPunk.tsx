@@ -2,30 +2,45 @@ import { useEffect, useState } from "react";
 
 import { ICompleteNFT } from "../utils/interfaces";
 import { ethers } from "ethers";
+import { useAppContext } from "../context/appContext";
 import useContract from "./useContract";
 
 interface State {
   loading: boolean;
   data: ICompleteNFT;
+  limit: boolean;
 }
 
 const useNFTPunk = (tokenId: string | string[] | undefined) => {
-  const [nft, setNft] = useState<State>({ loading: true, data: {} });
+  const [nft, setNft] = useState<State>({ loading: true, data: {}, limit: false });
   const contract = useContract();
+  const { account, isCorrectNetwork, nfts } = useAppContext();
 
+  // check if tokenId is higher than length
+  const limit =
+    tokenId === "0"
+      ? false
+      : !nfts.loading
+      ? nfts.length < (parseInt(typeof tokenId === "string" ? tokenId : "0") || Infinity)
+      : null;
+
+  // get nft punk data
   useEffect(() => {
-    if (window.ethereum && contract.signer && tokenId) {
+    if (
+      window.ethereum &&
+      contract.signer &&
+      tokenId &&
+      isCorrectNetwork &&
+      account &&
+      limit === false
+    ) {
       (async () => {
         try {
-          // const randomDna = await contract.pseudoRandomDNA(tokenId, address);
-          const tokenURI = await contract.tokenURI(tokenId);
           const dna = await contract.tokenDNA(tokenId);
-          const owner = await contract.ownerOf(tokenId);
 
           const [
-            // tokenURI,
-            // dna,
-            // owner,
+            tokenURI,
+            owner,
             accessoriesType,
             clotheColor,
             clotheType,
@@ -40,9 +55,8 @@ const useNFTPunk = (tokenId: string | string[] | undefined) => {
             skinColor,
             topType,
           ] = await Promise.all([
-            // contract.tokenURI(tokenId),
-            // contract.tokenDNA(tokenId),
-            // contract.ownerOf(tokenId),
+            contract.tokenURI(tokenId),
+            contract.ownerOf(tokenId),
             contract.getAccesoriesType(dna),
             contract.getClotheColor(dna),
             contract.getClotheType(dna),
@@ -58,8 +72,9 @@ const useNFTPunk = (tokenId: string | string[] | undefined) => {
             contract.getTopType(dna),
           ]);
 
-          const responseMetadata = await fetch(tokenURI);
-          const metadata = await responseMetadata.json();
+          // get metadata
+          const res = await fetch(tokenURI);
+          const metadata = await res.json();
 
           const data = {
             tokenId,
@@ -84,15 +99,17 @@ const useNFTPunk = (tokenId: string | string[] | undefined) => {
             ...metadata,
           };
 
-          setNft({ loading: false, data });
+          setNft({ loading: false, data, limit: false });
         } catch (err) {
           console.log(err);
-          setNft({ loading: false, data: {} });
+          setNft({ loading: false, data: {}, limit: false });
           throw err;
         }
       })();
+    } else if (limit) {
+      setNft({ loading: false, data: {}, limit: true });
     }
-  }, [contract.signer, tokenId]);
+  }, [account, contract.signer, isCorrectNetwork, limit, tokenId]);
 
   return nft;
 };

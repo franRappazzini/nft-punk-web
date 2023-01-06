@@ -1,5 +1,5 @@
+import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { IError, INFTs } from "../utils/interfaces";
-import { createContext, useContext, useEffect, useState } from "react";
 
 import Moralis from "moralis";
 import NFTPunk from "../contract/NFTPunk.json";
@@ -10,20 +10,26 @@ interface Props {
 
 interface IAppContext {
   nfts: INFTs;
+  getAllNfts: () => Promise<any>;
   connectWallet: () => Promise<any>;
   switchNetwork: () => Promise<any>;
   account: string;
   error: IError;
+  setError: Dispatch<SetStateAction<IError>>;
   removeError: () => void;
+  isCorrectNetwork: boolean;
 }
 
 const sampleAppContext: IAppContext = {
   nfts: { loading: true, data: [], length: 0 },
+  getAllNfts: () => new Promise(() => {}),
   connectWallet: () => new Promise(() => {}),
   switchNetwork: () => new Promise(() => {}),
   account: "",
   error: { error: false, message: "", code: 0, btn: "" },
-  removeError: () => {},
+  setError() {},
+  removeError() {},
+  isCorrectNetwork: false,
 };
 
 const appContext = createContext<IAppContext>(sampleAppContext);
@@ -33,60 +39,34 @@ const AppContext = ({ children }: Props) => {
   const [account, setAccount] = useState<string>(sampleAppContext.account);
   const [nfts, setNfts] = useState(sampleAppContext.nfts);
   const [error, setError] = useState(sampleAppContext.error);
+  const [isCorrectNetwork, setIsCorrectNetwork] = useState(sampleAppContext.isCorrectNetwork);
 
   useEffect(() => {
     const { ethereum } = window;
     if (ethereum) {
       // listen for accounts change and chain change
-      ethereum.on("accountsChanged", () => console.log()); //window.location.reload());
+      ethereum.on("accountsChanged", (accounts: string[]) => {
+        accounts.length ? setAccount(accounts[0]) : window.location.reload();
+      });
       ethereum.on("chainChanged", (chainId: string) => {
-        if (chainId === "0x13881") removeError();
-        else
-          setError({
-            error: true,
-            message: `Por favor cambie a la red Polygon Mumbai Testnet`,
-            code: 1,
-            btn: "Cambiar de red",
-          });
+        if (chainId !== "0x13881") setIsCorrectNetwork(false);
+        else setIsCorrectNetwork(true);
       });
 
-      // verify if the user is connected to the correct network
-      ethereum.request({ method: "eth_chainId" }).then((chainId: string) => {
-        if (chainId !== "0x13881") {
-          setError({
-            error: true,
-            message: `Por favor cambie a la red Polygon Mumbai Testnet`,
-            code: 1,
-            btn: "Cambiar de red",
-          });
-        }
-      });
-
-      // get user account
+      // dapp initialization
       (async () => {
+        // verify if the netwoek is correct
+        await ethereum.request({ method: "eth_chainId" }).then((chainId: string) => {
+          if (chainId !== "0x13881") setIsCorrectNetwork(false);
+          else setIsCorrectNetwork(true);
+        });
+
+        // verify if there is an account connected
         const accounts = await ethereum.request({ method: "eth_accounts" });
-        if (accounts.length) setAccount(accounts[0]);
-        else
-          setError({
-            error: true,
-            message: "Por favor conéctese con MetaMask",
-            code: 3,
-            btn: "Conectar",
-          });
+        accounts.length && setAccount(accounts[0]);
       })();
     }
   }, []);
-
-  useEffect(() => {
-    if (!account?.length)
-      setError({
-        error: true,
-        message: "Por favor conéctese con MetaMask",
-        code: 3,
-        btn: "Conectar",
-      });
-    else removeError();
-  }, [account]);
 
   // switch network to Polygon Mumbai
   const switchNetwork = async () => {
@@ -155,6 +135,7 @@ const AppContext = ({ children }: Props) => {
         code: 2,
         btn: "Instalar MetaMask",
       });
+      return { code: 2 };
     }
   };
 
@@ -162,26 +143,39 @@ const AppContext = ({ children }: Props) => {
 
   // get nft punks
   useEffect(() => {
-    (async () => {
-      try {
-        const { raw } = await Moralis.EvmApi.nft.getContractNFTs({
-          address: NFTPunk.address,
-          chain: "0x13881", // polygon mumbai testnet
-        });
-
-        console.log(raw.result);
-
-        setNfts({ loading: false, data: raw.result || [], length: raw.result?.length || 0 });
-      } catch (err) {
-        console.log(err);
-        setNfts(sampleAppContext.nfts);
-      }
-    })();
+    getAllNfts();
   }, []);
+
+  const getAllNfts = async () => {
+    try {
+      const { raw } = await Moralis.EvmApi.nft.getContractNFTs({
+        address: NFTPunk.address,
+        chain: "0x13881", // polygon mumbai testnet
+      });
+
+      // order nfts by token id
+      const data = raw.result?.sort((a, b) => parseInt(a.token_id) - parseInt(b.token_id));
+
+      setNfts({ loading: false, data: data || [], length: raw.total || 0 });
+    } catch (err) {
+      console.log(err);
+      setNfts(sampleAppContext.nfts);
+    }
+  };
 
   return (
     <appContext.Provider
-      value={{ account, nfts, connectWallet, switchNetwork, error, removeError }}
+      value={{
+        account,
+        nfts,
+        getAllNfts,
+        connectWallet,
+        switchNetwork,
+        error,
+        setError,
+        removeError,
+        isCorrectNetwork,
+      }}
     >
       {children}
     </appContext.Provider>

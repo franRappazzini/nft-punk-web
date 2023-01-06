@@ -1,6 +1,8 @@
-import { Badge, Button, Flex, Heading, Image, Stack, Text } from "@chakra-ui/react";
+import { Badge, Button, Flex, Heading, Image, Stack, Text, useToast } from "@chakra-ui/react";
 
 import Link from "next/link";
+import PopoverCopy from "../components/PopoverCopy/PopoverCopy";
+import defaultAvatar from "../public/assets/avataaars.svg";
 import { parseAddress } from "../utils/functions";
 import { useAppContext } from "../context/appContext";
 import useContract from "../hooks/useContract";
@@ -8,18 +10,62 @@ import useRandomImage from "../hooks/useRandomImage";
 import { useState } from "react";
 
 export default function Home() {
-  const { account, nfts } = useAppContext();
+  const { account, nfts, isCorrectNetwork, connectWallet, switchNetwork, setError, getAllNfts } =
+    useAppContext();
   const [isMinting, setIsMinting] = useState(false);
   const contract = useContract();
   const image = useRandomImage(nfts.length, account);
+  const toast = useToast();
 
+  // mint nft  punk
   const mint = async () => {
+    if (!account) {
+      return setError({
+        error: true,
+        message: "Por favor conéctese con MetaMask",
+        code: 3,
+        btn: "Conectar",
+      });
+    } else if (!isCorrectNetwork) {
+      return setError({
+        error: true,
+        message: `Por favor cambie a la red Polygon Mumbai Testnet`,
+        code: 1,
+        btn: "Cambiar de red",
+      });
+    }
+
     setIsMinting(true);
     try {
       const tx = await contract.mint();
-      console.log(tx);
+
+      toast({
+        title: "NFT Punk pendiente",
+        description: `Pronto verás tu nuevo NFT Punk en la lista. Hash de transacción: ${tx.hash}`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      await tx.wait();
+      await getAllNfts();
+
+      toast({
+        title: "Felicidades",
+        description: `Has minteado un NFT Punk exitosamente!`,
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
     } catch (err) {
       console.log(err);
+      toast({
+        title: "Error",
+        description: `Lo sentimos, ha ocurrido un error inesperado. Por favor, vuelva a intentarlo`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
     }
     setIsMinting(false);
   };
@@ -58,9 +104,24 @@ export default function Home() {
       </Stack>
 
       <Stack flex={1} direction="column" justify={"center"} align={"center"} position={"relative"}>
-        <Image src={image ? image : "https://avataaars.io/"} alt="avatar" />
+        <Image
+          src={
+            !image.loading && image.data !== "" && account && isCorrectNetwork
+              ? image.data
+              : defaultAvatar.src
+          }
+          alt="avatar"
+        />
 
-        {account ? (
+        {!account ? (
+          <Badge mt={2} onClick={connectWallet} cursor="pointer">
+            Wallet desconectada
+          </Badge>
+        ) : !isCorrectNetwork ? (
+          <Badge mt={2} onClick={switchNetwork} cursor="pointer">
+            Red incorrecta
+          </Badge>
+        ) : (
           <>
             <Flex mt={2}>
               <Badge>
@@ -71,9 +132,11 @@ export default function Home() {
               </Badge>
               <Badge ml={2}>
                 Address:
-                <Badge ml={1} colorScheme="green">
-                  {parseAddress(account)}
-                </Badge>
+                <PopoverCopy text={account}>
+                  <Badge ml={1} colorScheme="green">
+                    {parseAddress(account)}
+                  </Badge>
+                </PopoverCopy>
               </Badge>
             </Flex>
             {/* <Button
@@ -85,8 +148,6 @@ export default function Home() {
               Actualizar
             </Button> */}
           </>
-        ) : (
-          <Badge mt={2}>Wallet desconectada</Badge>
         )}
       </Stack>
     </Stack>

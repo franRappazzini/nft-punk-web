@@ -3,19 +3,18 @@ import { useEffect, useState } from "react";
 import useContract from "./useContract";
 
 const useRandomImage = (tokenId: number, address: string) => {
-  const [image, setImage] = useState<string>("");
+  const [image, setImage] = useState({ loading: true, data: "" });
   const contract = useContract();
 
+  // get next image
   useEffect(() => {
-    if (window.ethereum && contract.signer) {
+    if (window.ethereum && contract.signer && tokenId) {
       (async () => {
         try {
+          // create random dna for get image
           const randomDna = await contract.pseudoRandomDNA(tokenId, address);
 
           const [
-            // tokenURI,
-            // dna,
-            // owner,
             accessoriesType,
             clotheColor,
             clotheType,
@@ -30,9 +29,6 @@ const useRandomImage = (tokenId: number, address: string) => {
             skinColor,
             topType,
           ] = await Promise.all([
-            // contract.tokenURI(randomDna),
-            // contract.tokenDNA(randomDna),
-            // contract.ownerOf(randomDna),
             contract.getAccesoriesType(randomDna),
             contract.getClotheColor(randomDna),
             contract.getClotheType(randomDna),
@@ -76,89 +72,16 @@ const useRandomImage = (tokenId: number, address: string) => {
             "&topType=" +
             topType;
 
-          setImage(randomImg);
+          setImage({ loading: false, data: randomImg });
         } catch (err) {
           console.log(err);
+          setImage({ loading: false, data: "" });
         }
       })();
     }
-  }, [address, contract, tokenId]);
+  }, [address, contract.signer, tokenId]);
 
   return image;
 };
-
-// // Plural
-// const usePlatziPunksData = ({ owner = null } = {}) => {
-//   const [punks, setPunks] = useState([]);
-//   const { library } = useWeb3React();
-//   const [loading, setLoading] = useState(true);
-//   const platziPunks = usePlatziPunks();
-
-//   const update = useCallback(async () => {
-//     if (platziPunks) {
-//       setLoading(true);
-
-//       let tokenIds;
-
-//       if (!library.utils.isAddress(owner)) {
-//         const totalSupply = await platziPunks.methods.totalSupply().call();
-//         tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index);
-//       } else {
-//         const balanceOf = await platziPunks.methods.balanceOf(owner).call();
-
-//         const tokenIdsOfOwner = new Array(Number(balanceOf))
-//           .fill()
-//           .map((_, index) => platziPunks.methods.tokenOfOwnerByIndex(owner, index).call());
-
-//         tokenIds = await Promise.all(tokenIdsOfOwner);
-//       }
-
-//       const punksPromise = tokenIds.map((tokenId) => getPunkData({ tokenId, platziPunks }));
-
-//       const punks = await Promise.all(punksPromise);
-
-//       setPunks(punks);
-//       setLoading(false);
-//     }
-//   }, [platziPunks, owner, library?.utils]);
-
-//   useEffect(() => {
-//     update();
-//   }, [update]);
-
-//   return {
-//     loading,
-//     punks,
-//     update,
-//   };
-// };
-
-// Singular
-// const useNFTPunkData = (tokenId: number) => {
-//   const [punk, setPunk] = useState({});
-//   const [loading, setLoading] = useState(true);
-//   const contract = useContract();
-
-//   const update = useCallback(async () => {
-//     if (contract) {
-//       setLoading(true);
-
-//       const toSet = await GetPunkData(tokenId);
-//       setPunk(toSet);
-
-//       setLoading(false);
-//     }
-//   }, [contract, tokenId]);
-
-//   useEffect(() => {
-//     update();
-//   }, [update]);
-
-//   return {
-//     loading,
-//     punk,
-//     update,
-//   };
-// };
 
 export default useRandomImage;

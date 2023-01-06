@@ -18,35 +18,13 @@ const Nfts = () => {
   ];
 
   return (
-    <>
-      {/* <form onSubmit={submit}>
-        <FormControl>
-          <InputGroup mb={3}>
-            <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
-            <Input
-              isInvalid={false}
-              value={address ?? ""}
-              onChange={handleAddressChange}
-              placeholder="Buscar por dirección"
-            />
-            <InputRightElement width="5.5rem">
-              <Button type="submit" h="1.75rem" size="sm">
-                Buscar
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-          {submitted && !validAddress && <FormHelperText>Dirección inválida</FormHelperText>}
-        </FormControl>
-      </form> */}
-
-      <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6} p={6}>
-        {nfts.loading
-          ? skeletons.map((s) => s)
-          : nfts.length > 0
-          ? nfts.data.map((nft) => <NftCard key={nft.token_id} {...nft} />)
-          : "No hay"}
-      </Grid>
-    </>
+    <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6} p={6}>
+      {nfts.loading
+        ? skeletons.map((s) => s)
+        : nfts.length > 0
+        ? nfts.data.map((nft) => <NftCard key={nft.token_id} {...nft} />)
+        : "No hay"}
+    </Grid>
   );
 };
 
