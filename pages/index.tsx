@@ -1,4 +1,15 @@
-import { Badge, Button, Flex, Heading, Image, Stack, Text, useToast } from "@chakra-ui/react";
+import {
+  Badge,
+  Button,
+  Flex,
+  Heading,
+  Image,
+  SkeletonText,
+  Stack,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import defaultAvatar from "../public/assets/avataaars.svg";
@@ -6,7 +17,6 @@ import { parseAddress } from "../utils/functions";
 import { useAppContext } from "../context/appContext";
 import useContract from "../hooks/useContract";
 import useRandomImage from "../hooks/useRandomImage";
-import { useState } from "react";
 
 export default function Home() {
   const { account, nfts, isCorrectNetwork, connectWallet, switchNetwork, setError, getAllNfts } =
@@ -103,14 +113,16 @@ export default function Home() {
       </Stack>
 
       <Stack flex={1} direction="column" justify={"center"} align={"center"} position={"relative"}>
-        <Image
-          src={
-            !image.loading && image.data !== "" && account && isCorrectNetwork
-              ? image.data
-              : defaultAvatar.src
-          }
-          alt="avatar"
-        />
+        <SkeletonText isLoaded={!image.loading} noOfLines={9} spacing="4" skeletonHeight="4">
+          <Image
+            src={
+              !image.loading && image.data !== "" && account && isCorrectNetwork
+                ? image.data
+                : defaultAvatar.src
+            }
+            alt="avatar"
+          />
+        </SkeletonText>
 
         {!account ? (
           <Badge mt={2} onClick={connectWallet} cursor="pointer">
@@ -150,14 +162,6 @@ export default function Home() {
                 </Badge>
               </Badge>
             </Flex>
-            {/* <Button
-              // onClick={getPlatziPunksData}
-              mt={4}
-              size="xs"
-              colorScheme="green"
-            >
-              Actualizar
-            </Button> */}
           </>
         )}
       </Stack>

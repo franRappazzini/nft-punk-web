@@ -1,9 +1,9 @@
 import { Button, Stack, Text, useToast } from "@chakra-ui/react";
+import { isMobileVersion, parseAddress } from "../../utils/functions";
 
 import Error from "../Error/Error";
 import Head from "next/head";
 import Link from "next/link";
-import { parseAddress } from "../../utils/functions";
 import style from "./Layout.module.scss";
 import { useAppContext } from "../../context/appContext";
 import { useEffect } from "react";
@@ -39,17 +39,7 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
 
   // check if the connection is from a mobile
   useEffect(() => {
-    const { userAgent } = navigator;
-    if (
-      userAgent &&
-      (userAgent.match(/Android/i) ||
-        userAgent.match(/webOS/i) ||
-        userAgent.match(/iPhone/i) ||
-        userAgent.match(/iPad/i) ||
-        userAgent.match(/iPod/i) ||
-        userAgent.match(/BlackBerry/i) ||
-        userAgent.match(/Windows Phone/i))
-    ) {
+    if (isMobileVersion()) {
       toast({
         title: "Atención. Estás usando un dispositivo móvil",
         description:

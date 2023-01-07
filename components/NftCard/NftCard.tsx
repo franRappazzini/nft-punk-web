@@ -1,6 +1,5 @@
 import { Card, CardBody, Heading, Image, Stack } from "@chakra-ui/react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 interface Props {
@@ -20,8 +19,8 @@ const NftCard = ({ token_id, name, metadata, image }: Props) => {
   return (
     <Card maxW="sm" onClick={handleClick} cursor={pathname === "/nfts" ? "pointer" : "auto"}>
       <CardBody>
-        <Stack>
-          <Image src={img} alt={nameId} borderRadius="lg" />
+        <Stack alignItems="center">
+          <Image src={img} alt={nameId} borderRadius="lg" height={230} width={282} />
         </Stack>
         <Heading size="md" textAlign="center" mt={6}>
           {nameId}

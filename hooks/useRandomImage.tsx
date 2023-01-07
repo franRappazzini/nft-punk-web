@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { isMobileVersion } from "../utils/functions";
 import useContract from "./useContract";
 
 const useRandomImage = (tokenId: number, address: string) => {
@@ -78,7 +79,10 @@ const useRandomImage = (tokenId: number, address: string) => {
           setImage({ loading: false, data: "" });
         }
       })();
+    } else if (isMobileVersion()) {
+      setImage({ loading: false, data: "" });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, contract.signer, tokenId]);
 
   return image;

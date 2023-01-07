@@ -23,7 +23,7 @@ const Nfts = () => {
         ? skeletons.map((s) => s)
         : nfts.length > 0
         ? nfts.data.map((nft) => <NftCard key={nft.token_id} {...nft} />)
-        : "No hay"}
+        : "Ha ocurrido un error, vuelva a intentarlo por favor."}
     </Grid>
   );
 };

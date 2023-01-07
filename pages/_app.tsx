@@ -13,6 +13,7 @@ declare global {
   }
 }
 
+// moralis initialization
 Moralis.start({ apiKey: process.env.NEXT_PUBLIC_MORALIS_API_KEY });
 
 const colors = {
@@ -25,7 +26,7 @@ const colors = {
 
 const theme = extendTheme({ colors });
 
-// TODO ver imagen de index cuando esta cargando
+// TODO dark mode
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
