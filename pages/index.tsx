@@ -129,7 +129,21 @@ export default function Home() {
                   {nfts.length}
                 </Badge>
               </Badge>
-              <Badge ml={2}>
+              <Badge
+                ml={2}
+                onClick={() => {
+                  navigator.clipboard.writeText(account);
+                  toast({
+                    position: "top",
+                    variant: "subtle",
+                    description: "Copiado!",
+                    status: "success",
+                    size: "xs",
+                    duration: 1000,
+                  });
+                }}
+                cursor="pointer"
+              >
                 Address:
                 <Badge ml={1} colorScheme="green">
                   {parseAddress(account)}

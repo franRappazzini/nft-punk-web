@@ -61,6 +61,10 @@ const NftDetail = () => {
       isOwner: account.toLowerCase() === data.owner?.toLowerCase(),
       owner: data.owner,
     });
+
+    // prevent change account before transfer
+    if (!(account.toLowerCase() === data.owner?.toLowerCase())) onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, data.owner]);
 
   // tranfer nft and update ownership
@@ -174,7 +178,22 @@ const NftDetail = () => {
             </Text>
             <Text fontWeight={600}>
               Owner:
-              <Tag ml={2} colorScheme="green">
+              <Tag
+                ml={2}
+                colorScheme="green"
+                onClick={() => {
+                  navigator.clipboard.writeText(account);
+                  toast({
+                    position: "top",
+                    variant: "subtle",
+                    description: "Copiado!",
+                    status: "success",
+                    size: "xs",
+                    duration: 1000,
+                  });
+                }}
+                cursor="pointer"
+              >
                 {ownership?.owner}
               </Tag>
             </Text>

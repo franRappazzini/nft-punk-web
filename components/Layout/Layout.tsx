@@ -90,7 +90,17 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
 
         {account ? (
           <Text
-            onClick={() => navigator.clipboard.writeText(account)}
+            onClick={() => {
+              navigator.clipboard.writeText(account);
+              toast({
+                position: "top",
+                variant: "subtle",
+                description: "Copiado!",
+                status: "success",
+                size: "xs",
+                duration: 1000,
+              });
+            }}
             fontWeight={600}
             cursor="pointer"
           >
