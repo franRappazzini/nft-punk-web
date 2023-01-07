@@ -1,5 +1,4 @@
 import "../styles/globals.scss";
-import "../styles/home.scss";
 
 import AppContext from "../context/appContext";
 import type { AppProps } from "next/app";
@@ -26,7 +25,6 @@ const colors = {
 
 const theme = extendTheme({ colors });
 
-// TODO ver bug copy address en index
 // TODO ver imagen de index cuando esta cargando
 
 export default function App({ Component, pageProps }: AppProps) {

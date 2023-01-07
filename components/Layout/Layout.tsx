@@ -3,7 +3,6 @@ import { Button, Stack, Text, useToast } from "@chakra-ui/react";
 import Error from "../Error/Error";
 import Head from "next/head";
 import Link from "next/link";
-import PopoverCopy from "../PopoverCopy/PopoverCopy";
 import { parseAddress } from "../../utils/functions";
 import style from "./Layout.module.scss";
 import { useAppContext } from "../../context/appContext";
@@ -90,15 +89,13 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
         </nav>
 
         {account ? (
-          <PopoverCopy text={account}>
-            <Text
-              onClick={() => navigator.clipboard.writeText(account)}
-              fontWeight={600}
-              cursor="pointer"
-            >
-              {parseAddress(account)}
-            </Text>
-          </PopoverCopy>
+          <Text
+            onClick={() => navigator.clipboard.writeText(account)}
+            fontWeight={600}
+            cursor="pointer"
+          >
+            {parseAddress(account)}
+          </Text>
         ) : (
           <Button size="sm" colorScheme="green" onClick={connectWallet}>
             MetaMask

@@ -31,7 +31,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 import NftCard from "../../components/NftCard/NftCard";
-import PopoverCopy from "../../components/PopoverCopy/PopoverCopy";
 import { useAppContext } from "../../context/appContext";
 import useContract from "../../hooks/useContract";
 import useNFTPunk from "../../hooks/useNFTPunk";
@@ -175,11 +174,9 @@ const NftDetail = () => {
             </Text>
             <Text fontWeight={600}>
               Owner:
-              <PopoverCopy text={ownership?.owner || ""}>
-                <Tag ml={2} colorScheme="green">
-                  {ownership?.owner}
-                </Tag>
-              </PopoverCopy>
+              <Tag ml={2} colorScheme="green">
+                {ownership?.owner}
+              </Tag>
             </Text>
             <Table size="sm" variant="simple">
               <Thead>

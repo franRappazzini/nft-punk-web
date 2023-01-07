@@ -1,7 +1,6 @@
 import { Badge, Button, Flex, Heading, Image, Stack, Text, useToast } from "@chakra-ui/react";
 
 import Link from "next/link";
-import PopoverCopy from "../components/PopoverCopy/PopoverCopy";
 import defaultAvatar from "../public/assets/avataaars.svg";
 import { parseAddress } from "../utils/functions";
 import { useAppContext } from "../context/appContext";
@@ -132,11 +131,9 @@ export default function Home() {
               </Badge>
               <Badge ml={2}>
                 Address:
-                <PopoverCopy text={account}>
-                  <Badge ml={1} colorScheme="green">
-                    {parseAddress(account)}
-                  </Badge>
-                </PopoverCopy>
+                <Badge ml={1} colorScheme="green">
+                  {parseAddress(account)}
+                </Badge>
               </Badge>
             </Flex>
             {/* <Button
