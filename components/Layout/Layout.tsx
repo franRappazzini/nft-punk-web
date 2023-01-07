@@ -1,4 +1,5 @@
-import { Button, Stack, Text, useToast } from "@chakra-ui/react";
+import { Button, IconButton, Stack, Text, useColorMode, useToast } from "@chakra-ui/react";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { isMobileVersion, parseAddress } from "../../utils/functions";
 
 import Error from "../Error/Error";
@@ -16,6 +17,7 @@ interface Props {
 const Layout = ({ children, title = "NFT Punk" }: Props) => {
   const { account, connectWallet, switchNetwork, error, removeError } = useAppContext();
   const toast = useToast();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   // modal error responses
   const handleClick = async () => {
@@ -78,29 +80,39 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
           </Stack>
         </nav>
 
-        {account ? (
-          <Text
-            onClick={() => {
-              navigator.clipboard.writeText(account);
-              toast({
-                position: "top",
-                variant: "subtle",
-                description: "Copiado!",
-                status: "success",
-                size: "xs",
-                duration: 1000,
-              });
-            }}
-            fontWeight={600}
-            cursor="pointer"
-          >
-            {parseAddress(account)}
-          </Text>
-        ) : (
-          <Button size="sm" colorScheme="green" onClick={connectWallet}>
-            MetaMask
-          </Button>
-        )}
+        <Stack direction="row" alignItems="center">
+          <IconButton
+            aria-label="dark-mode"
+            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            onClick={toggleColorMode}
+            variant="ghost"
+            mr={3}
+          />
+
+          {account ? (
+            <Text
+              onClick={() => {
+                navigator.clipboard.writeText(account);
+                toast({
+                  position: "top",
+                  variant: "subtle",
+                  description: "Copiado!",
+                  status: "success",
+                  size: "xs",
+                  duration: 1000,
+                });
+              }}
+              fontWeight={600}
+              cursor="pointer"
+            >
+              {parseAddress(account)}
+            </Text>
+          ) : (
+            <Button size="sm" colorScheme="green" onClick={connectWallet}>
+              MetaMask
+            </Button>
+          )}
+        </Stack>
       </header>
 
       <main>
