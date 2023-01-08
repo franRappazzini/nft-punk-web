@@ -55,7 +55,7 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
   }, []);
 
   return (
-    <>
+    <div className={style.layout}>
       <Head>
         <title>{title}</title>
       </Head>
@@ -120,8 +120,20 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
         {error.error && <Error error={error} onClick={handleClick} removeError={removeError} />}
       </main>
 
-      <footer></footer>
-    </>
+      <footer className={style.layout_footer}>
+        <Text>
+          © 2023 - Desarrollado por{" "}
+          <a
+            href="https://www.linkedin.com/in/francisco-rappazzini/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Francisco Rappazzini
+          </a>
+          .
+        </Text>
+      </footer>
+    </div>
   );
 };
 

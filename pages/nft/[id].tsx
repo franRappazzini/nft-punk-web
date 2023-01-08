@@ -118,7 +118,7 @@ const NftDetail = () => {
 
   if (!account || !isCorrectNetwork) {
     return (
-      <Stack pt={{ base: 3 }} alignItems="center">
+      <Stack alignItems="center">
         <Alert status="error" w="fit-content">
           <AlertIcon />
           <AlertTitle>Error!</AlertTitle>
