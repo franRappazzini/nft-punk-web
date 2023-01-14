@@ -5,7 +5,7 @@ Cada Platzi Punk se genera de forma secuencial basado en tu address, usa el prev
 ## 🛠️ Construido con:
 
 * Next + TypeScript
-* [Solidity](https://github.com/franRappazzini/nft-punk-contracts)
+* Solidity [ver repo](https://github.com/franRappazzini/nft-punk-contracts)
 * Context
 * Ethers.js
 * Moralis
@@ -14,7 +14,7 @@ Cada Platzi Punk se genera de forma secuencial basado en tu address, usa el prev
 ### Deploy
 
 * Front: Vercel
-* DB: Polygon Testnet (Mumbai) / [Repo](https://github.com/franRappazzini/nft-punk-contracts)
+* DB: Polygon Testnet (Mumbai) / [Ver repo](https://github.com/franRappazzini/nft-punk-contracts)
 
 
 
