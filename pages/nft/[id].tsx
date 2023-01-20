@@ -135,7 +135,7 @@ const NftDetail = () => {
             colorScheme="green"
             onClick={!account ? connectWallet : switchNetwork}
           >
-            {!account ? "Conectarse" : "Cambiar de Red"}
+            {!account ? "Conectarse" : "Cambiar"}
           </Button>
         </Alert>
       </Stack>

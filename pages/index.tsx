@@ -9,7 +9,6 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import defaultAvatar from "../public/assets/avataaars.svg";
@@ -17,6 +16,7 @@ import { parseAddress } from "../utils/functions";
 import { useAppContext } from "../context/appContext";
 import useContract from "../hooks/useContract";
 import useRandomImage from "../hooks/useRandomImage";
+import { useState } from "react";
 
 export default function Home() {
   const { account, nfts, isCorrectNetwork, connectWallet, switchNetwork, setError, getAllNfts } =
