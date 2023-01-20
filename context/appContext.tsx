@@ -3,6 +3,8 @@ import { IError, INFTs } from "../utils/interfaces";
 
 import Moralis from "moralis";
 import NFTPunk from "../contract/NFTPunk.json";
+import { isMobileVersion } from "../utils/functions";
+import { providers } from "ethers";
 
 interface Props {
   children: JSX.Element;
@@ -81,18 +83,32 @@ const AppContext = ({ children }: Props) => {
         // if the chain is not added to MetaMask, is added
         if (err.code === 4902) {
           try {
-            await ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: "0x13881",
-                  chainName: "Mumbai Testnet",
-                  nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-                  rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
-                  blockExplorerUrls: ["https://mumbai.polygonscan.com"],
-                },
-              ],
-            });
+            // if (isMobileVersion()) {
+            const provider = new providers.Web3Provider(ethereum);
+            await provider.send("wallet_addEthereumChain", [
+              {
+                chainId: "0x13881",
+                chainName: "Mumbai Testnet",
+                nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+                rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
+                blockExplorerUrls: ["https://mumbai.polygonscan.com"],
+              },
+            ]);
+
+            // } else {
+            //   await ethereum.request({
+            //     method: "wallet_addEthereumChain",
+            //     params: [
+            //       {
+            //         chainId: "0x13881",
+            //         chainName: "Mumbai Testnet",
+            //         nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+            //         rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
+            //         blockExplorerUrls: ["https://mumbai.polygonscan.com"],
+            //       },
+            //     ],
+            //   });
+            // }
           } catch (err) {
             console.log(err);
             return err;
@@ -106,36 +122,41 @@ const AppContext = ({ children }: Props) => {
 
   // connect to wallet
   const connectWallet = async () => {
-    const { ethereum } = window;
-    if (ethereum) {
-      try {
-        const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-
-        // verify if the user is connected to the correct network
-        const chainId = await ethereum.request({ method: "eth_chainId" });
-        if (chainId !== "0x13881") {
-          setError({
-            error: true,
-            message: `Por favor cambie a la red Polygon Mumbai Testnet`,
-            code: 1,
-            btn: "Cambiar de red",
-          });
-        }
-
-        setAccount(accounts[0]);
-      } catch (err) {
-        console.log(err);
-        return err;
-      }
+    if (isMobileVersion()) {
+      // use metamask browser
+      window.open("https://metamask.app.link/dapp/nft-punk-web.vercel.app/", "_blank");
     } else {
-      console.log("MetaMask is not installed. Please install MetaMask to continue");
-      setError({
-        error: true,
-        message: "MetaMask no está instalada. Por favor instale MetaMask para continuar.",
-        code: 2,
-        btn: "Instalar MetaMask",
-      });
-      return { code: 2 };
+      const { ethereum } = window;
+      if (ethereum) {
+        try {
+          const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+
+          // verify if the user is connected to the correct network
+          const chainId = await ethereum.request({ method: "eth_chainId" });
+          if (chainId !== "0x13881") {
+            setError({
+              error: true,
+              message: `Por favor cambie a la red Polygon Mumbai Testnet`,
+              code: 1,
+              btn: "Cambiar de red",
+            });
+          }
+
+          setAccount(accounts[0]);
+        } catch (err) {
+          console.log(err);
+          return err;
+        }
+      } else {
+        console.log("MetaMask is not installed. Please install MetaMask to continue");
+        setError({
+          error: true,
+          message: "MetaMask no está instalada. Por favor instale MetaMask para continuar.",
+          code: 2,
+          btn: "Instalar MetaMask",
+        });
+        return { code: 2 };
+      }
     }
   };
 

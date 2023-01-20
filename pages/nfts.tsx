@@ -6,16 +6,9 @@ import { useAppContext } from "../context/appContext";
 const Nfts = () => {
   const { nfts } = useAppContext();
 
-  const skeletons = [
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={1} />,
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={2} />,
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={3} />,
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={4} />,
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={5} />,
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={6} />,
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={7} />,
-    <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={8} />,
-  ];
+  const skeletons = new Array(8)
+    .fill(0)
+    .map((_, i) => <SkeletonText mt="4" noOfLines={10} spacing="4" skeletonHeight="4" key={i} />);
 
   return (
     <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6} p={6}>

@@ -43,11 +43,10 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
   useEffect(() => {
     if (isMobileVersion()) {
       toast({
-        title: "Atención. Estás usando un dispositivo móvil",
-        description:
-          "No podrás utilizar ciertas funcionalidades como mintear o ver los detalles completos de un NFT Punk. conéctese desde una computadora para poder usar todas las funcionalidades",
+        title: "Estás usando un dispositivo móvil",
+        description: "Deberás tener instalado MetaMask para poder interactuar con la dApp",
         status: "warning",
-        duration: 15000,
+        duration: 10000,
         isClosable: true,
       });
     }
