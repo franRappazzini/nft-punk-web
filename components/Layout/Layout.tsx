@@ -44,7 +44,8 @@ const Layout = ({ children, title = "NFT Punk" }: Props) => {
     if (isMobileVersion()) {
       toast({
         title: "Estás usando un dispositivo móvil",
-        description: "Deberás tener instalado MetaMask para poder interactuar con la dApp",
+        description:
+          "Deberás tener instalado MetaMask y la red Polygon Mumbai Testnet para poder interactuar con la dApp",
         status: "warning",
         duration: 10000,
         isClosable: true,

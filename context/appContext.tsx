@@ -4,7 +4,6 @@ import { IError, INFTs } from "../utils/interfaces";
 import Moralis from "moralis";
 import NFTPunk from "../contract/NFTPunk.json";
 import { isMobileVersion } from "../utils/functions";
-import { providers } from "ethers";
 
 interface Props {
   children: JSX.Element;
@@ -83,32 +82,18 @@ const AppContext = ({ children }: Props) => {
         // if the chain is not added to MetaMask, is added
         if (err.code === 4902) {
           try {
-            // if (isMobileVersion()) {
-            const provider = new providers.Web3Provider(ethereum);
-            await provider.send("wallet_addEthereumChain", [
-              {
-                chainId: "0x13881",
-                chainName: "Mumbai Testnet",
-                nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-                rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
-                blockExplorerUrls: ["https://mumbai.polygonscan.com"],
-              },
-            ]);
-
-            // } else {
-            //   await ethereum.request({
-            //     method: "wallet_addEthereumChain",
-            //     params: [
-            //       {
-            //         chainId: "0x13881",
-            //         chainName: "Mumbai Testnet",
-            //         nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-            //         rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
-            //         blockExplorerUrls: ["https://mumbai.polygonscan.com"],
-            //       },
-            //     ],
-            //   });
-            // }
+            await ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0x13881",
+                  chainName: "Mumbai Testnet",
+                  nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+                  rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
+                  blockExplorerUrls: ["https://mumbai.polygonscan.com"],
+                },
+              ],
+            });
           } catch (err) {
             console.log(err);
             return err;
