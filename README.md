@@ -1,3 +1,23 @@
+# NFT Punk
+NFT Punk es una colección de Avatares randomizados cuya metadata es almacenada on-chain. Poseen características únicas y sólo hay 999 en existencia.
+Cada Platzi Punk se genera de forma secuencial basado en tu address, usa el previsualizador para averiguar cuál sería tu Platzi Punk si minteas en este momento
+
+## 🛠️ Construido con:
+
+* Next + TypeScript
+* Solidity [ver repo](https://github.com/franRappazzini/nft-punk-contracts)
+* Context
+* Ethers.js
+* Moralis
+* [API Avataaars](https://getavataaars.com/)
+
+### Deploy
+
+* Front: Vercel
+* DB: Polygon Testnet (Mumbai) / [Ver repo](https://github.com/franRappazzini/nft-punk-contracts)
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
