@@ -23,7 +23,7 @@ export default function Home() {
     useAppContext();
   const [isMinting, setIsMinting] = useState(false);
   const contract = useContract();
-  const image = useRandomImage(nfts.length, account);
+  const image = useRandomImage(nfts.data.length, account);
   const toast = useToast();
 
   // mint nft  punk
@@ -138,7 +138,7 @@ export default function Home() {
               <Badge>
                 Next ID:
                 <Badge ml={1} colorScheme="green">
-                  {nfts.length}
+                  {nfts.data.length}
                 </Badge>
               </Badge>
               <Badge

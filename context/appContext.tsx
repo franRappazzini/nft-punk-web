@@ -22,7 +22,7 @@ interface IAppContext {
 }
 
 const sampleAppContext: IAppContext = {
-  nfts: { loading: true, data: [], length: 0 },
+  nfts: { loading: true, data: [] },
   getAllNfts: () => new Promise(() => {}),
   connectWallet: () => new Promise(() => {}),
   switchNetwork: () => new Promise(() => {}),
@@ -159,10 +159,13 @@ const AppContext = ({ children }: Props) => {
         chain: "0x13881", // polygon mumbai testnet
       });
 
+      console.log({ raw });
       // order nfts by token id
       const data = raw.result?.sort((a, b) => parseInt(a.token_id) - parseInt(b.token_id));
 
-      setNfts({ loading: false, data: data || [], length: raw.total || 0 });
+      console.log({ data });
+
+      setNfts({ loading: false, data: data || [] });
     } catch (err) {
       console.log(err);
       setNfts(sampleAppContext.nfts);

@@ -60,5 +60,4 @@ export interface INFT {
 export interface INFTs {
   loading: boolean;
   data: INFT[] | [];
-  length: number;
 }

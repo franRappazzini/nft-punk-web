@@ -21,7 +21,7 @@ const useNFTPunk = (tokenId: string | string[] | undefined) => {
     tokenId === "0"
       ? false
       : !nfts.loading
-      ? nfts.length < (parseInt(typeof tokenId === "string" ? tokenId : "0") || Infinity)
+      ? nfts.data.length < (parseInt(typeof tokenId === "string" ? tokenId : "0") || Infinity)
       : null;
 
   // get nft punk data

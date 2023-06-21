@@ -13,7 +13,7 @@ declare global {
 }
 
 // moralis initialization
-Moralis.start({ apiKey: process.env.NEXT_PUBLIC_MORALIS_API_KEY });
+if (!Moralis.Core.isStarted) Moralis.start({ apiKey: process.env.NEXT_PUBLIC_MORALIS_API_KEY });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
