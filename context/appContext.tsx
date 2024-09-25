@@ -4,6 +4,7 @@ import { IError, INFTs } from "../utils/interfaces";
 import Moralis from "moralis";
 import NFTPunk from "../contract/NFTPunk.json";
 import { isMobileVersion } from "../utils/functions";
+import { NETWORKS } from "../utils/networks";
 
 interface Props {
   children: JSX.Element;
@@ -50,7 +51,7 @@ const AppContext = ({ children }: Props) => {
         accounts.length ? setAccount(accounts[0]) : window.location.reload();
       });
       ethereum.on("chainChanged", (chainId: string) => {
-        if (chainId !== "0x13881") setIsCorrectNetwork(false);
+        if (chainId !== NETWORKS.AMOY.chainId) setIsCorrectNetwork(false);
         else setIsCorrectNetwork(true);
       });
 
@@ -58,7 +59,7 @@ const AppContext = ({ children }: Props) => {
       (async () => {
         // verify if the netwoek is correct
         await ethereum.request({ method: "eth_chainId" }).then((chainId: string) => {
-          if (chainId !== "0x13881") setIsCorrectNetwork(false);
+          if (chainId !== NETWORKS.AMOY.chainId) setIsCorrectNetwork(false);
           else setIsCorrectNetwork(true);
         });
 
@@ -76,7 +77,7 @@ const AppContext = ({ children }: Props) => {
       try {
         await ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x13881" }],
+          params: [{ chainId: NETWORKS.AMOY.chainId }],
         });
       } catch (err: any) {
         // if the chain is not added to MetaMask, is added
@@ -84,15 +85,7 @@ const AppContext = ({ children }: Props) => {
           try {
             await ethereum.request({
               method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: "0x13881",
-                  chainName: "Mumbai Testnet",
-                  nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-                  rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
-                  blockExplorerUrls: ["https://mumbai.polygonscan.com"],
-                },
-              ],
+              params: [NETWORKS.AMOY],
             });
           } catch (err) {
             console.log(err);
@@ -118,7 +111,7 @@ const AppContext = ({ children }: Props) => {
 
           // verify if the user is connected to the correct network
           const chainId = await ethereum.request({ method: "eth_chainId" });
-          if (chainId !== "0x13881") {
+          if (chainId !== NETWORKS.AMOY.chainId) {
             setError({
               error: true,
               message: `Por favor cambie a la red Polygon Mumbai Testnet`,
@@ -156,12 +149,14 @@ const AppContext = ({ children }: Props) => {
     try {
       const { raw } = await Moralis.EvmApi.nft.getContractNFTs({
         address: NFTPunk.address,
-        chain: "0x13881", // polygon mumbai testnet
+        chain: NETWORKS.AMOY.chainId, // polygon mumbai testnet
       });
 
       console.log({ raw });
       // order nfts by token id
-      const data = raw.result?.sort((a, b) => parseInt(a.token_id) - parseInt(b.token_id));
+      const data = raw.result?.sort(
+        (a: any, b: any) => parseInt(a.token_id) - parseInt(b.token_id)
+      );
 
       console.log({ data });
 
